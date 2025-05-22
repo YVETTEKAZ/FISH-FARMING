@@ -12,46 +12,53 @@ class AuthController extends Controller
     public function register(Request $request)
     {
         $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
-            'password' => 'required|string|min:8',
+            'name' => 'required',
+            'email' => 'required|email|unique:users',
+            'password' => 'required|min:6',
+            'role' => 'required|in:farmer,admin,specialist',
         ]);
 
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
-            'role' => 'farmer', // Default to farmer
+            'role' => $request->role,
         ]);
 
-        $token = $user->createToken('auth_token')->plainTextToken;
-
-        return response()->json(['token' => $token, 'user' => $user]);
+        return response()->json(['message' => 'User registered successfully', 'user' => $user], 201);
     }
 
     public function login(Request $request)
     {
         $request->validate([
-            'email' => 'required|email',
-            'password' => 'required',
+            'email' => 'required',
+            'password' => 'required'
         ]);
 
-        $user = User::where('email', $request->email)->first();
+         $user = User::where('email', $request->email)->first();
 
-        if (!$user || !Hash::check($request->password, $user->password)) {
-            throw ValidationException::withMessages([
-                'email' => ['The provided credentials are incorrect.'],
-            ]);
+    if (! $user || ! Hash::check($request->password, $user->password)) {
+        return response()->json(['message' => 'Invalid credentials'], 401);
         }
 
-        $token = $user->createToken('auth_token')->plainTextToken;
+        $token = $user->createToken('api-token')->plainTextToken;
 
-        return response()->json(['token' => $token, 'user' => $user]);
-    }
+        return response()->json([
+            'user' => $user,
+            'token' => $token
+        ]);
+        
 
-    public function logout(Request $request)
-    {
-        $request->user()->currentAccessToken()->delete();
-        return response()->json(['message' => 'Logged out']);
     }
+    
+public function logout(Request $request)
+{
+    // Revoke the current access token
+    $request->user()->currentAccessToken()->delete();
+
+    return response()->json([
+        'message' => 'Logged out successfully'
+    ]);
+}
+    
 }
