@@ -18,9 +18,16 @@ function Register() {
       if (role === 'farmer') navigate('/farmer-dashboard');
       if (role === 'specialist') navigate('/specialist-dashboard');
       if (role === 'admin') navigate('/admin-dashboard');
-    } catch (err) {
-      setError('Registration failed');
     }
+    catch (err) {
+  console.log('Error:', err.response?.data || err.message);
+
+  if (err.response && err.response.data && err.response.data.errors) {
+    const errorMessages = Object.values(err.response.data.errors).flat().join(' ');
+    setError(errorMessages);
+  } else {
+    setError('Registration failed.');
+  }}
   };
 
   return (

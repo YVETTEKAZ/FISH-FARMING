@@ -47,24 +47,23 @@ function SpeciesDetail() {
   }
 
   return (
-    <div className="container mx-auto p-4">
-      <h2 className="text-3xl font-bold mb-6">{species.name}</h2>
-      <div className="flex flex-col md:flex-row gap-6">
-        <img
-          src={species.image || 'https://via.placeholder.com/600x400?text=Fish+Image'}
-          alt={species.name}
-          className="w-full md:w-1/2 h-96 object-cover rounded-lg"
-        />
-        <div className="flex-1">
-          <h3 className="text-2xl font-semibold mb-4">Description</h3>
-          <p className="text-lg mb-4">{species.description}</p>
-          <h3 className="text-2xl font-semibold mb-4">Optimal Growth Locations</h3>
-          <p className="text-lg">
-            {species.location || 'Suitable for various regions in Rwanda'}
-          </p>
-        </div>
-      </div>
-    </div>
+   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+  {species.map((fish) => (
+    <Link key={fish.id} to={`/species/${fish.id}`} className="border rounded p-4 hover:shadow-lg bg-white">
+      <img
+        src={fish.image || 'https://via.placeholder.com/300x200'}
+        alt={fish.name}
+        className="w-full h-40 object-cover mb-4 rounded"
+      />
+      <h3 className="text-xl font-semibold mb-1">{fish.name}</h3>
+      <p className="text-sm text-gray-700 mb-1">{fish.description.slice(0, 80)}...</p>
+      {fish.growth_time && <p className="text-sm text-blue-600">⏱ Growth: {fish.growth_time}</p>}
+      {fish.environment && <p className="text-sm text-green-600">🌡️ Env: {fish.environment}</p>}
+      {fish.feed_type && <p className="text-sm text-orange-600">🍽️ Feed: {fish.feed_type}</p>}
+    </Link>
+  ))}
+</div>
+
   );
 }
 

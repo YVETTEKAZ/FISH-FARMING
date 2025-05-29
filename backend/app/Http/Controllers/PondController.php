@@ -7,28 +7,34 @@ use Illuminate\Http\Request;
 
 class PondController extends Controller
 {
-    public function index()
-    {
-        return Pond::with(['user', 'fishSpecies'])->get();
+public function index(Request $request)
+{
+    $user = auth()->user();
+
+    if ($request->query('all') == 1 && in_array($user->role, ['admin', 'specialist'])) {
+        return Pond::with('user', 'fishSpecies')->get();
     }
 
-    public function store(Request $request)
-    {
-        $request->validate([
-            'name' => 'required|string',
-            'user_id' => 'required|exists:users,id',
-            'location' => 'required|string',
-            'size' => 'required|string',
-            
-        ]);
+    return Pond::with('user', 'fishSpecies')->where('user_id', $user->id)->get();
+}
 
-        $pond = Pond::create([
-            'name' => $request->name,
-            'user_id' => $request->user_id,
-            'location' => $request->location,
-            'size' => $request->size,
-            
-        ]);
+
+   public function store(Request $request)
+{
+    $request->validate([
+        'name' => 'required|string',
+        'location' => 'required|string',
+        'size' => 'required|string',
+    ]);
+
+    $pond = $request->user()->ponds()->create([
+        'name' => $request->name,
+        'location' => $request->location,
+        'size' => $request->size,
+    ]);
+
+  
+
 
         $pond->fishSpecies()->sync($request->fish_species_ids);
 
@@ -40,28 +46,31 @@ class PondController extends Controller
         return Pond::with('fishSpecies')->findOrFail($id);
     }
 
-    public function update(Request $request, $id)
-    {
-        $pond = Pond::findOrFail($id);
+   public function update(Request $request, $id)
+{
+    $pond = Pond::findOrFail($id);
 
-        $pond->update($request->only(['location', 'size']));
+    $request->validate([
+        'name' => 'required|string',
+        'location' => 'required|string',
+        'size' => 'required|string',
+        
 
-        if ($request->has('fish_species_ids')) {
-            $pond->fishSpecies()->sync($request->fish_species_ids);
-        }
+    ]);
 
-        return $pond->load('fishSpecies');
-    }
+    $pond->update($request->only(['name', 'location', 'size']));
 
-    public function destroy($id)
-    {
-        $pond = Pond::findOrFail($id);
-        $pond->fishSpecies()->detach();
-        $pond->delete();
+    return response()->json(['message' => 'Pond updated', 'pond' => $pond]);
+}
 
-        return response()->json(['message' => 'Pond deleted']);
-    }
-    public function assignFish(Request $request, $id)
+public function destroy($id)
+{
+    $pond = Pond::findOrFail($id);
+    $pond->fishSpecies()->detach(); // detach all fish before deletion
+    $pond->delete();
+
+    return response()->json(['message' => 'Pond deleted']);
+}    public function assignFish(Request $request, $id)
 {
     $request->validate([
         'fish_species_ids' => 'required|array',
@@ -75,6 +84,9 @@ class PondController extends Controller
         'message' => 'Fish species assigned to pond successfully',
         'pond' => $pond->load('fishSpecies')
     ]);
+
+
 }
+
 
 }

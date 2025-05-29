@@ -10,8 +10,12 @@ class FishSpecies extends Model
     use HasFactory;
 
     protected $fillable = [
-        'name',
-        'description',
+    'name',
+    'description',
+    'image',
+    'growth_time',
+    'environment',
+    'feed_type',
     ];
 
     // Relationships

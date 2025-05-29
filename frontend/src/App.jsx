@@ -13,6 +13,7 @@ import FarmerDashboard from './pages/FarmerDashboard';
 import AdminDashboard from './pages/AdminDashboard';
 import SpecialistDashboard from './pages/SpecialistDashboard';
 import Contact from './pages/Contact';
+import AddPond from './pages/AddPond';
 
 function App() {
   return (
@@ -27,6 +28,7 @@ function App() {
             <Route path="/species" element={<FishSpecies />} />
             <Route path="/species/:speciesId" element={<SpeciesDetail />} />
             <Route path="/contact" element={<Contact />} />
+            <Route path="/add-pond" element={<AddPond />} />
           </Route>
           {/* Auth Routes */}
           <Route element={<PublicRoute restricted />}>
@@ -41,7 +43,7 @@ function App() {
             <Route path="/admin-dashboard" element={<AdminDashboard />} />
           </Route>
           <Route element={<ProtectedRoute role="specialist" />}>
-            <Route path="/specialist-dashboard" element={<SpecialistDashboard />} />
+          <Route path="/specialist-dashboard" element={<SpecialistDashboard />} />
           </Route>
         </Routes>
       </main>

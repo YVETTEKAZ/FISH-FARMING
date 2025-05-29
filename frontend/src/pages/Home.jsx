@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { Link} from "react-router-dom";
+import { Link } from 'react-router-dom';
 function Home() {
     const navigate = useNavigate();
 
@@ -138,9 +138,14 @@ function Home() {
     </div>
   </div>
   
-        <div  className=" w-full   h-50 bg-blue-300  mt-70 "><h1 className="text-black ml-100 font-bold">Are you a fish farmer  need to boost you business  production ?</h1>
+        <div  className=" w-full   h-50 bg-blue-300  mt-70 "><h1 className="text-black ml-100 font-bold fontsize-200">Are you a fish farmer  need to boost you business  production ?</h1>
         <p  className="text-black ml-120">start today!</p>
- <Link to="Login.jsx" className="px-4 py-2 bg-red-900 text-white rounded-lg ml-150">Register here</Link>
+ <Link to="/register">
+  <button className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 ml-120">
+    Register
+  </button>
+</Link>
+
         
         </div>
   </div>

@@ -5,6 +5,12 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PondController;
 use App\Http\Controllers\FishSpeciesController;
+use App\Http\Controllers\ContactController;
+use App\Http\Controllers\UserController;
+
+
+
+
 
 // ====================
 // Public Routes
@@ -12,6 +18,12 @@ use App\Http\Controllers\FishSpeciesController;
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 Route::middleware('auth:sanctum')->post('/logout', [AuthController::class, 'logout']);
+Route::get('/users', [UserController::class, 'index']);
+Route::put('/users/{id}', [UserController::class, 'update']);
+Route::delete('/users/{id}', [UserController::class, 'destroy']);
+
+Route::post('/contact', [ContactController::class, 'store']);
+
 
 // ====================
 // Protected Routes
@@ -34,4 +46,12 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Logout
     Route::post('/logout', [AuthController::class, 'logout']);
+    //pond update and delete
+
+    //Route::post('/ponds/{pond}/assign-fish', [PondController::class, 'updateFish']);
+    //Route::delete('/ponds/{pond}/remove-fish/{fish}', [PondController::class, 'removeFish']);
+    Route::put('/ponds/{id}', [PondController::class, 'update']);
+    Route::delete('/ponds/{id}', [PondController::class, 'destroy']);
+
+
 });
